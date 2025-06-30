@@ -1,4 +1,4 @@
-# Onlone Protobuf contract to TS converter 
+# Online Protobuf contract to TS converter
 
 inspired by
 
@@ -6,7 +6,10 @@ inspired by
 - https://pb.brandonxiang.top/#
 
 # Setup
+
 - React 19
-- TypeScript 
+- TypeScript
 - Vite
 - shadcn.ui
+- Radix UI
+- Tanstack Store

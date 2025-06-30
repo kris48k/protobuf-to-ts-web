@@ -1,0 +1,9 @@
+.code-panel {
+  height: 74vh;
+}
+
+#proto-editor,
+#ts-editor {
+  width: 100% !important;
+  height: 100% !important;
+}
