@@ -19,6 +19,7 @@ message User {
   string email = 3;
   repeated string tags = 4;
   optional Address address = 5;
+  Status status = 6;
 }
 
 message Address {

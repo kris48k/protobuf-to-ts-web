@@ -95,6 +95,8 @@ h1 {
 
 .light {
   --border: oklch(0.2911 0.0141 237/30%);
+  --background: white;
+  --popover: white;
 }
 
 @layer base {
