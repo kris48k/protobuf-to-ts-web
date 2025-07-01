@@ -1,16 +1,20 @@
 import { Store } from "@tanstack/react-store";
-import converter from "./lib/converter";
+import converter from "../lib/converter";
+
+export interface ISettings {
+  enumAsUnion?: boolean;
+}
 
 export interface IState {
-  theme: "dark" | "light";
   proto: string;
   ts: string;
+  settings: ISettings;
 }
 
 const initialProto = `syntax = "proto3";
 
 message User {
-  int32 id = 1;
+  required int32 id = 1;
   string name = 2;
   string email = 3;
   repeated string tags = 4;
@@ -31,39 +35,18 @@ enum Status {
   PENDING = 3;
 }`;
 
-const initialTs = `export interface User {
-  id?: number;
-  name?: string;
-  email?: string;
-  tags?: string[];
-  address?: Address;
-}
-
-export interface Address {
-  street?: string;
-  city?: string;
-  country?: string;
-  postal_code?: number;
-}
-
-export enum Status {
-  UNKNOWN = 0,
-  ACTIVE = 1,
-  INACTIVE = 2,
-  PENDING = 3,
-}
-`;
-
-export const store = new Store<IState>(
+export const codeStore = new Store<IState>(
   {
-    theme: "dark",
     proto: initialProto,
-    ts: initialTs,
+    ts: converter(initialProto, {}),
+    settings: {
+      enumAsUnion: false,
+    },
   },
   {
     updateFn: (prevValue: IState) => (updateValue) => {
       const newValue = updateValue(prevValue);
-      newValue.ts = converter(newValue.proto);
+      newValue.ts = converter(newValue.proto, newValue.settings);
       return newValue;
     },
   }

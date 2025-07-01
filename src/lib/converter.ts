@@ -1,4 +1,6 @@
-export default (protoContent: string) => {
+import type { ISettings } from "@/store/codeStore";
+
+export default (protoContent: string, settings: ISettings) => {
   try {
     const lines = protoContent
       .split("\n")
@@ -34,13 +36,22 @@ export default (protoContent: string) => {
         const enumName = line.match(/enum\s+(\w+)/)?.[1];
         if (enumName) {
           currentEnum = enumName;
-          typescript += `export enum ${enumName} {\n`;
+          if (!settings.enumAsUnion) {
+            typescript += `export enum ${enumName} {\n`;
+          } else {
+            typescript += `export type ${enumName} = `;
+          }
           indentLevel = 1;
         }
       } else if (line === "}") {
-        indentLevel = 0;
-        typescript += "}\n\n";
-        currentMessage = null;
+        if (currentEnum && settings.enumAsUnion) {
+          typescript = typescript.slice(0, -1);
+          typescript += "; \n\n";
+        } else {
+          indentLevel = 0;
+          typescript += "}\n\n";
+          currentMessage = null;
+        }
         currentEnum = null;
       } else if (currentMessage && line.includes("=")) {
         const fieldMatch = line.match(/(\w+)\s+(\w+)\s*=\s*(\d+);?/);
@@ -60,10 +71,15 @@ export default (protoContent: string) => {
         }
       } else if (currentEnum && line.includes("=")) {
         const enumMatch = line.match(/(\w+)\s*=\s*(\d+);?/);
+
         if (enumMatch) {
           const [, name, value] = enumMatch;
-          const indent = "  ".repeat(indentLevel);
-          typescript += `${indent}${name} = ${value},\n`;
+          if (!settings.enumAsUnion) {
+            const indent = "  ".repeat(indentLevel);
+            typescript += `${indent}${name} = ${value},\n`;
+          } else {
+            typescript += ` "${name}" |`;
+          }
         }
       }
     }

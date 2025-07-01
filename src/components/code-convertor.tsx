@@ -1,6 +1,6 @@
 import { CodeEditor } from "./code-editor";
 import { Card, CardHeader, CardContent } from "./ui/card";
-import { store } from "../store";
+import { codeStore as store } from "../store/codeStore";
 
 import "./code-convertor.css";
 import { useStore } from "@tanstack/react-store";
@@ -10,9 +10,7 @@ export function CodeConvertor() {
     updateProto(newValue);
   }
 
-  function onTsChange(newValue: string) {
-    console.log("changeTs", newValue);
-  }
+  function onTsChange() {}
 
   const protoCode = useStore(store, (state) => state.proto);
   const tsCode = useStore(store, (state) => state.ts);
