@@ -1,30 +1,30 @@
 import { CodeEditor } from "./code-editor";
 import { Card, CardHeader, CardContent } from "./ui/card";
+import { store } from "../store";
+
 import "./code-convertor.css";
-
-const protoValue = `syntax = "proto3";
-
-message SearchRequest {
-  string query = 1;
-  int32 page_number = 2;
-  int32 results_per_page = 3;
-}
-`;
-
-const tsValue = `export interface SearchRequest {
-  query: string;
-  page_number: number;
-  results_per_page: number;
-}`;
+import { useStore } from "@tanstack/react-store";
 
 export function CodeConvertor() {
   function onProtoChange(newValue: string) {
-    console.log("changeProto", newValue);
+    updateProto(newValue);
   }
 
   function onTsChange(newValue: string) {
     console.log("changeTs", newValue);
   }
+
+  const protoCode = useStore(store, (state) => state.proto);
+  const tsCode = useStore(store, (state) => state.ts);
+
+  const updateProto = (newProtoCode: string) => {
+    store.setState((state) => {
+      return {
+        ...state,
+        proto: newProtoCode,
+      };
+    });
+  };
 
   return (
     <div className="code-block flex gap-1 width-full height-80vh">
@@ -35,7 +35,7 @@ export function CodeConvertor() {
             language="protobuf"
             onChange={onProtoChange}
             id="proto-editor"
-            value={protoValue}
+            value={protoCode}
             theme="dark"
           />
         </CardContent>
@@ -47,7 +47,7 @@ export function CodeConvertor() {
             language="typescript"
             onChange={onTsChange}
             id="ts-editor"
-            value={tsValue}
+            value={tsCode}
             theme="dark"
           />
         </CardContent>

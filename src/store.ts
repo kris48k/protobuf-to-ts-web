@@ -1,9 +1,10 @@
 import { Store } from "@tanstack/react-store";
+import converter from "./lib/converter";
 
 export interface IState {
-    theme: "dark" | "light",
-    proto: string,
-    ts: string,
+  theme: "dark" | "light";
+  proto: string;
+  ts: string;
 }
 
 const initialProto = `syntax = "proto3";
@@ -53,8 +54,17 @@ export enum Status {
 }
 `;
 
-export const store = new Store<IState>({
-  theme: "dark",
-  proto: initialProto,
-  ts: initialTs,
-});
+export const store = new Store<IState>(
+  {
+    theme: "dark",
+    proto: initialProto,
+    ts: initialTs,
+  },
+  {
+    updateFn: (prevValue: IState) => (updateValue) => {
+      const newValue = updateValue(prevValue);
+      newValue.ts = converter(newValue.proto);
+      return newValue;
+    },
+  }
+);
